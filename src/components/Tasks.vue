@@ -26,6 +26,7 @@ export default {
     props: {
         task: Object,
     },
+    emits: ["toggle-completed"],
 };
 </script>
 
@@ -35,7 +36,7 @@ export default {
     position: relative;
 }
 
-.task-container::after {
+.task-container:not(:last-of-type):after {
     content: "";
     position: absolute;
     right: 0;
