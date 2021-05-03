@@ -91,12 +91,14 @@ export default {
         },
         toggleCompleted(task) {
             task.complete = !task.complete;
+            this.$emit("update");
         },
         removeCompletedTasks() {
             this.todo.tasks = this.todo.tasks.filter((task) => !task.complete);
+            this.$emit("update");
         },
     },
-    emits: ["create-new-task", 'delete-todo-list'],
+    emits: ["create-new-task", "delete-todo-list", "update"],
     computed: {
         taskRemaining() {
             const pendingTask = this.todo.tasks.filter((task) => !task.complete)
@@ -112,6 +114,8 @@ export default {
 <style scoped>
 .todo-tasks {
     --spacer: 2rem;
+
+    height: fit-content;
 
     background: var(--clr-light);
     color: var(--clr-dark);
@@ -141,10 +145,33 @@ export default {
 }
 
 .tasks {
-    margin-bottom: 1.75rem;
+    height: 250px;
+    overflow: auto;
+
     display: flex;
     flex-direction: column;
     gap: 2rem;
+}
+
+.tasks::-webkit-scrollbar {
+    width: 5px;
+}
+
+.tasks::-webkit-scrollbar-track {
+    border-radius: 1px;
+}
+
+.tasks::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #777;
+}
+
+.tasks::-webkit-scrollbar-thumb:hover {
+    background-color: #666;
+}
+
+.tasks::-webkit-scrollbar-thumb:active {
+    background-color: #444;
 }
 
 .new.task {
