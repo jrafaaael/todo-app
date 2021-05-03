@@ -10,6 +10,7 @@
         :todo="currentTodoList"
         @create-new-task="createNewTask"
         @delete-todo-list="deleteTodoList"
+        @update="setLocalStorage({ key: 'todoList', value: this.todoList })"
     ></todo-tasks>
 </template>
 
@@ -25,16 +26,28 @@ export default {
     },
     data() {
         return {
-            todoList: [],
+            todoList: this.getLocalStorage({ key: "todoList" }) ?? [],
             currentTodoList: null,
         };
     },
     methods: {
+        getLocalStorage({ key }) {
+            return localStorage.hasOwnProperty(key)
+                ? JSON.parse(localStorage.getItem(key))
+                : undefined;
+        },
+        setLocalStorage({ key, value }) {
+            localStorage.setItem(key, JSON.stringify(value));
+        },
         createNewTodo(todoName) {
             this.todoList.push({
                 name: todoName,
                 id: new Date().getTime(),
                 tasks: [],
+            });
+            this.setLocalStorage({
+                key: "todoList",
+                value: this.todoList,
             });
         },
         changeCurrentTodo(todo) {
@@ -46,11 +59,19 @@ export default {
                 complete: false,
                 id: new Date().getTime(),
             });
+            this.setLocalStorage({
+                key: "todoList",
+                value: this.todoList,
+            });
         },
         deleteTodoList(id) {
-            this.todoList = this.todoList.filter(list => list.id !== id);
+            this.todoList = this.todoList.filter((list) => list.id !== id);
+            this.setLocalStorage({
+                key: "todoList",
+                value: this.todoList,
+            });
             this.currentTodoList = null;
-        }
+        },
     },
 };
 </script>
@@ -65,14 +86,19 @@ export default {
     --clr-warning: rgb(99, 36, 36);
 }
 
+*,
+*::after,
+*::before {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 html,
 body {
     width: 100%;
     min-height: 100vh;
-    margin: 0;
-    padding: 0;
     background-color: var(--clr-primary);
-    box-sizing: border-box;
 }
 
 main {
@@ -88,7 +114,7 @@ main {
 }
 
 .title {
-    margin: -0.3em 0 0.5em;
+    margin: -0.3em 0 0.3em;
     grid-area: header;
     color: rgba(0, 0, 0, 0.1);
     font-size: calc(7vw + 2rem);
